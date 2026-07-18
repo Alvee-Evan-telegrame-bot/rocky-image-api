@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "functions": {
+    "api/edit.js": {
+      "maxDuration": 30
+    }
+  }
+}
