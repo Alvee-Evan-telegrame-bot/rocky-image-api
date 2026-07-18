@@ -25,6 +25,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Server missing HF_TOKEN environment variable" });
     }
 
+    // 1. Get the source image as a Buffer (works for both remote URLs and data: URLs)
     let imageBuffer;
     if (imageUrl.startsWith("data:")) {
       const base64 = imageUrl.split(",")[1];
@@ -37,10 +38,11 @@ export default async function handler(req, res) {
       imageBuffer = Buffer.from(await imgResponse.arrayBuffer());
     }
 
+    // 2. Use the official Hugging Face client - it handles provider routing correctly
     const client = new InferenceClient(HF_TOKEN);
 
     const resultBlob = await client.imageToImage({
-      provider: "fal-ai",
+      provider: "replicate",
       model: "black-forest-labs/FLUX.1-Kontext-dev",
       inputs: new Blob([imageBuffer]),
       parameters: { prompt: prompt }
