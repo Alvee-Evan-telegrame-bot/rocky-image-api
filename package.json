@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Rocky's free image editing API powered by Hugging Face, deployed on Vercel",
   "main": "index.js",
+  "dependencies": {
+    "@huggingface/inference": "^3.0.0"
+  },
   "scripts": {
     "dev": "vercel dev"
   },
