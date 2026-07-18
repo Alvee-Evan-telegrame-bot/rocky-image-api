@@ -36,15 +36,15 @@ export default async function handler(req, res) {
       base64Image = imageBuffer.toString("base64");
     }
 
-    // 2. Call Hugging Face image-to-image model using proper JSON payload
+    // 2. Call Hugging Face's new Inference Providers router
+    //    Using fal-ai as the provider and FLUX.1-Kontext-dev, an image-EDITING model
     const hfResponse = await fetch(
-      "https://api-inference.huggingface.co/models/timbrooks/instruct-pix2pix",
+      "https://router.huggingface.co/fal-ai/models/black-forest-labs/FLUX.1-Kontext-dev",
       {
         method: "POST",
         headers: {
           Authorization: `Bearer ${HF_TOKEN}`,
-          "Content-Type": "application/json",
-          "X-Wait-For-Model": "true"
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           inputs: base64Image,
@@ -61,15 +61,14 @@ export default async function handler(req, res) {
 
     const contentType = hfResponse.headers.get("content-type") || "";
 
-    // HF sometimes returns JSON with a base64 image inside instead of raw bytes
     if (contentType.includes("application/json")) {
       const data = await hfResponse.json();
       if (data.error) {
         return res.status(502).json({ error: "AI provider error", details: data.error });
       }
-      const outBase64 = data[0]?.generated_image || data.image || data[0];
+      const outBase64 = data.image || data[0]?.image || data[0];
       if (!outBase64) {
-        return res.status(502).json({ error: "Unexpected response format from AI provider" });
+        return res.status(502).json({ error: "Unexpected response format from AI provider", raw: data });
       }
       const outBuffer = Buffer.from(outBase64, "base64");
       res.setHeader("Content-Type", "image/jpeg");
