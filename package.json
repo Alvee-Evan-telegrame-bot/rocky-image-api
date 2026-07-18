@@ -1,0 +1,11 @@
+{
+  "name": "rocky-image-api",
+  "version": "1.0.0",
+  "description": "Rocky's free image editing API powered by Hugging Face, deployed on Vercel",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "author": "Rocky",
+  "license": "MIT"
+}
