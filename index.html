@@ -366,7 +366,8 @@
 
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || `Server error (${res.status})`);
+        const detail = errData.details ? ` — ${JSON.stringify(errData.details)}` : '';
+        throw new Error((errData.error || `Server error (${res.status})`) + detail);
       }
 
       const blob = await res.blob();
